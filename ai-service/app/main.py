@@ -138,11 +138,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.chat import router as chat_router
 
+from app.database import Base, engine
+from app import models
+
 
 # load_dotenv()
 
 
 app = FastAPI()
+Base.metadata.create_all(bind=engine)
 
 
 # CORS
