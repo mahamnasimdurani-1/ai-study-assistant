@@ -185,6 +185,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes.chat import router as chat_router
 from app.auth import router as auth_router
 from app.routes.conversations import router as conversations_router
+from app.routes.pdf import router as pdf_router
 
 from app.database import Base, engine
 from app import models
@@ -207,6 +208,7 @@ app.add_middleware(
 app.include_router(chat_router)
 app.include_router(auth_router)
 app.include_router(conversations_router)
+app.include_router(pdf_router)
 
 
 @app.get("/")
