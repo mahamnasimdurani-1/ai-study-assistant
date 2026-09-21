@@ -448,6 +448,12 @@ export default function Home() {
     return localStorage.getItem("access_token");
   }
 
+  // Logout
+  function logout() {
+    localStorage.removeItem("access_token");
+    window.location.href = "/login";
+  }
+
   // Load conversation history
   async function loadConversations() {
     const token = getToken();
@@ -521,6 +527,7 @@ export default function Home() {
     loadConversations();
   }, []);
 
+  // Send message
   async function sendMessage() {
     if (!message.trim() || loading) return;
 
@@ -746,12 +753,24 @@ export default function Home() {
               </div>
             </div>
 
-            <button
-              onClick={clearChat}
-              className="rounded-lg border border-white/10 px-3 py-2 text-xs text-gray-400 transition hover:bg-white/5 hover:text-white"
-            >
-              Clear Chat
-            </button>
+            {/* Header Buttons */}
+            <div className="flex items-center gap-2">
+
+              <button
+                onClick={clearChat}
+                className="rounded-lg border border-white/10 px-3 py-2 text-xs text-gray-400 transition hover:bg-white/5 hover:text-white"
+              >
+                Clear Chat
+              </button>
+
+              <button
+                onClick={logout}
+                className="rounded-lg border border-red-500/20 px-3 py-2 text-xs text-red-400 transition hover:bg-red-500/10 hover:text-red-300"
+              >
+                Logout
+              </button>
+
+            </div>
           </header>
 
           {/* Chat Area */}
@@ -998,4 +1017,5 @@ export default function Home() {
     </main>
   );
 }
+
 
