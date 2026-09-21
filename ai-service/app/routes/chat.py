@@ -1,4 +1,134 @@
-from fastapi import APIRouter, Depends
+# from fastapi import APIRouter, Depends
+# from pydantic import BaseModel
+# from sqlalchemy.orm import Session
+
+# from app.services.ai_service import get_ai_response
+# from app.auth import get_current_user, get_db
+# from app.models.user import User
+# from app.models.conversation import Conversation
+# from app.models.message import Message
+
+
+# router = APIRouter()
+
+
+# # ==========================================
+# # CHAT MESSAGE
+# # ==========================================
+
+# class ChatMessage(BaseModel):
+#     role: str
+#     content: str
+
+
+# # ==========================================
+# # CHAT REQUEST
+# # ==========================================
+
+# class ChatRequest(BaseModel):
+#     message: str
+#     history: list[ChatMessage] = []
+
+
+# # ==========================================
+# # CHAT API
+# # ==========================================
+
+# @router.post("/chat")
+# def chat(
+#     request: ChatRequest,
+#     current_user: User = Depends(get_current_user),
+#     db: Session = Depends(get_db)
+# ):
+
+#     # ==========================================
+#     # 1. CREATE NEW CONVERSATION
+#     # ==========================================
+
+#     conversation = Conversation(
+#         title=request.message[:50],
+#         user_id=current_user.id
+#     )
+
+#     db.add(conversation)
+#     db.commit()
+#     db.refresh(conversation)
+
+
+#     # ==========================================
+#     # 2. PREPARE MESSAGES FOR AI
+#     # ==========================================
+
+#     messages = []
+
+#     # Previous conversation
+#     for message in request.history:
+
+#         messages.append({
+#             "role": message.role,
+#             "content": message.content
+#         })
+
+
+#     # Current user message
+#     messages.append({
+#         "role": "user",
+#         "content": request.message
+#     })
+
+
+#     # ==========================================
+#     # 3. SAVE USER MESSAGE
+#     # ==========================================
+
+#     user_message = Message(
+#         role="user",
+#         content=request.message,
+#         conversation_id=conversation.id
+#     )
+
+#     db.add(user_message)
+#     db.commit()
+
+
+#     # ==========================================
+#     # 4. GET AI RESPONSE
+#     # ==========================================
+
+#     answer = get_ai_response(messages)
+
+
+#     # ==========================================
+#     # 5. SAVE AI MESSAGE
+#     # ==========================================
+
+#     assistant_message = Message(
+#         role="assistant",
+#         content=answer,
+#         conversation_id=conversation.id
+#     )
+
+#     db.add(assistant_message)
+#     db.commit()
+
+
+#     # ==========================================
+#     # 6. RETURN RESPONSE
+#     # ==========================================
+
+#     return {
+#         "answer": answer,
+
+#         "conversation_id": conversation.id,
+
+#         "user": {
+#             "id": current_user.id,
+#             "name": current_user.name,
+#             "email": current_user.email
+#         }
+#     }
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -12,27 +142,16 @@ from app.models.message import Message
 router = APIRouter()
 
 
-# ==========================================
-# CHAT MESSAGE
-# ==========================================
-
 class ChatMessage(BaseModel):
     role: str
     content: str
 
 
-# ==========================================
-# CHAT REQUEST
-# ==========================================
-
 class ChatRequest(BaseModel):
     message: str
     history: list[ChatMessage] = []
+    conversation_id: int | None = None
 
-
-# ==========================================
-# CHAT API
-# ==========================================
 
 @router.post("/chat")
 def chat(
@@ -40,47 +159,50 @@ def chat(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # Existing conversation
+    if request.conversation_id is not None:
 
-    # ==========================================
-    # 1. CREATE NEW CONVERSATION
-    # ==========================================
+        conversation = (
+            db.query(Conversation)
+            .filter(
+                Conversation.id == request.conversation_id,
+                Conversation.user_id == current_user.id
+            )
+            .first()
+        )
 
-    conversation = Conversation(
-        title=request.message[:50],
-        user_id=current_user.id
-    )
+        if not conversation:
+            raise HTTPException(
+                status_code=404,
+                detail="Conversation not found"
+            )
 
-    db.add(conversation)
-    db.commit()
-    db.refresh(conversation)
+    # Create new conversation
+    else:
+        conversation = Conversation(
+            title=request.message[:50],
+            user_id=current_user.id
+        )
 
+        db.add(conversation)
+        db.commit()
+        db.refresh(conversation)
 
-    # ==========================================
-    # 2. PREPARE MESSAGES FOR AI
-    # ==========================================
-
+    # Prepare messages for AI
     messages = []
 
-    # Previous conversation
     for message in request.history:
-
         messages.append({
             "role": message.role,
             "content": message.content
         })
 
-
-    # Current user message
     messages.append({
         "role": "user",
         "content": request.message
     })
 
-
-    # ==========================================
-    # 3. SAVE USER MESSAGE
-    # ==========================================
-
+    # Save user message
     user_message = Message(
         role="user",
         content=request.message,
@@ -90,18 +212,10 @@ def chat(
     db.add(user_message)
     db.commit()
 
-
-    # ==========================================
-    # 4. GET AI RESPONSE
-    # ==========================================
-
+    # Get AI response
     answer = get_ai_response(messages)
 
-
-    # ==========================================
-    # 5. SAVE AI MESSAGE
-    # ==========================================
-
+    # Save AI response
     assistant_message = Message(
         role="assistant",
         content=answer,
@@ -111,16 +225,9 @@ def chat(
     db.add(assistant_message)
     db.commit()
 
-
-    # ==========================================
-    # 6. RETURN RESPONSE
-    # ==========================================
-
     return {
         "answer": answer,
-
         "conversation_id": conversation.id,
-
         "user": {
             "id": current_user.id,
             "name": current_user.name,
