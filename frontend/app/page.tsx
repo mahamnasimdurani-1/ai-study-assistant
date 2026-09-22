@@ -1964,7 +1964,7 @@ export default function Home() {
       setConversationId(id);
       setMessage("");
 
-      // Reset PDF Q&A
+      // Reset PDF Q&A UI
       setPdfQuestion("");
       setPdfAnswer("");
     } catch (error) {
@@ -2096,6 +2096,10 @@ Total chunks: ${
 
           body: JSON.stringify({
             query: pdfQuestion.trim(),
+
+            // Send previous conversation
+            // to backend for context
+            history: messages,
           }),
         }
       );
