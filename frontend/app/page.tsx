@@ -1,10 +1,435 @@
+// // // "use client";
+
+// // // import { useState } from "react";
+
+// // // type Message = {
+// // //   role: "user" | "assistant";
+// // //   content: string;
+// // // };
+
+// // // export default function Home() {
+// // //   const [message, setMessage] = useState("");
+// // //   const [messages, setMessages] = useState<Message[]>([]);
+// // //   const [loading, setLoading] = useState(false);
+
+// // //   async function sendMessage() {
+// // //     if (!message.trim() || loading) return;
+
+// // //     const userMessage = message.trim();
+
+// // //     // Current conversation history before adding the new message
+// // //     const currentHistory = messages;
+
+// // //     // Show user's message immediately
+// // //     setMessages((prev) => [
+// // //       ...prev,
+// // //       {
+// // //         role: "user",
+// // //         content: userMessage,
+// // //       },
+// // //     ]);
+
+// // //     setMessage("");
+// // //     setLoading(true);
+
+// // //     try {
+// // //       const response = await fetch("http://127.0.0.1:8000/chat", {
+// // //         method: "POST",
+// // //         headers: {
+// // //           "Content-Type": "application/json",
+// // //         },
+// // //         body: JSON.stringify({
+// // //           message: userMessage,
+// // //           history: currentHistory,
+// // //         }),
+// // //       });
+
+// // //       if (!response.ok) {
+// // //         throw new Error("Failed to get response from server");
+// // //       }
+
+// // //       const data = await response.json();
+
+// // //       // Add AI response
+// // //       setMessages((prev) => [
+// // //         ...prev,
+// // //         {
+// // //           role: "assistant",
+// // //           content: data.answer,
+// // //         },
+// // //       ]);
+// // //     } catch (error) {
+// // //       console.error(error);
+
+// // //       setMessages((prev) => [
+// // //         ...prev,
+// // //         {
+// // //           role: "assistant",
+// // //           content:
+// // //             "Sorry, something went wrong. Please check that the backend is running.",
+// // //         },
+// // //       ]);
+// // //     } finally {
+// // //       setLoading(false);
+// // //     }
+// // //   }
+
+// // //   function clearChat() {
+// // //     setMessages([]);
+// // //     setMessage("");
+// // //   }
+
+// // //   return (
+// // //     <main className="min-h-screen bg-[#08090d] text-white">
+// // //       <div className="flex min-h-screen">
+
+// // //         {/* Sidebar */}
+// // //         <aside className="hidden w-64 border-r border-white/10 bg-[#0d0f14] p-4 md:flex md:flex-col">
+
+// // //           {/* Logo */}
+// // //           <div className="mb-8 flex items-center gap-3">
+// // //             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 text-xl">
+// // //               🤖
+// // //             </div>
+
+// // //             <div>
+// // //               <h1 className="font-bold">StudyAI</h1>
+
+// // //               <p className="text-xs text-gray-500">
+// // //                 AI Study Assistant
+// // //               </p>
+// // //             </div>
+// // //           </div>
+
+// // //           {/* New Chat */}
+// // //           <button
+// // //             onClick={clearChat}
+// // //             className="mb-6 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm transition hover:bg-white/10"
+// // //           >
+// // //             <span>＋</span>
+// // //             New Chat
+// // //           </button>
+
+// // //           {/* Subjects */}
+// // //           <div className="space-y-2">
+// // //             <p className="mb-3 px-2 text-xs uppercase tracking-wider text-gray-500">
+// // //               Study
+// // //             </p>
+
+// // //             <button className="w-full rounded-xl px-3 py-2 text-left text-sm text-gray-300 transition hover:bg-white/5">
+// // //               🐍 Python
+// // //             </button>
+
+// // //             <button className="w-full rounded-xl px-3 py-2 text-left text-sm text-gray-300 transition hover:bg-white/5">
+// // //               ⚡ JavaScript
+// // //             </button>
+
+// // //             <button className="w-full rounded-xl px-3 py-2 text-left text-sm text-gray-300 transition hover:bg-white/5">
+// // //               🌐 MERN
+// // //             </button>
+
+// // //             <button className="w-full rounded-xl px-3 py-2 text-left text-sm text-gray-300 transition hover:bg-white/5">
+// // //               🧠 Machine Learning
+// // //             </button>
+
+// // //             <button className="w-full rounded-xl px-3 py-2 text-left text-sm text-gray-300 transition hover:bg-white/5">
+// // //               📊 Data Science
+// // //             </button>
+
+// // //             <button className="w-full rounded-xl px-3 py-2 text-left text-sm text-gray-300 transition hover:bg-white/5">
+// // //               ✨ Artificial Intelligence
+// // //             </button>
+// // //           </div>
+
+// // //           {/* Bottom */}
+// // //           <div className="mt-auto rounded-xl border border-white/10 bg-white/5 p-4">
+// // //             <p className="text-sm font-medium">
+// // //               AI Study Assistant
+// // //             </p>
+
+// // //             <p className="mt-1 text-xs text-gray-500">
+// // //               Learn smarter with AI.
+// // //             </p>
+// // //           </div>
+// // //         </aside>
+
+// // //         {/* Main Chat */}
+// // //         <section className="flex min-h-screen flex-1 flex-col">
+
+// // //           {/* Header */}
+// // //           <header className="flex items-center justify-between border-b border-white/10 bg-[#0b0d12]/80 px-5 py-4 backdrop-blur">
+
+// // //             <div>
+// // //               <h2 className="font-semibold">
+// // //                 AI Study Assistant
+// // //               </h2>
+
+// // //               <div className="mt-1 flex items-center gap-2">
+// // //                 <span className="h-2 w-2 rounded-full bg-green-400"></span>
+
+// // //                 <span className="text-xs text-gray-500">
+// // //                   Online
+// // //                 </span>
+// // //               </div>
+// // //             </div>
+
+// // //             <button
+// // //               onClick={clearChat}
+// // //               className="rounded-lg border border-white/10 px-3 py-2 text-xs text-gray-400 transition hover:bg-white/5 hover:text-white"
+// // //             >
+// // //               Clear Chat
+// // //             </button>
+// // //           </header>
+
+// // //           {/* Chat Area */}
+// // //           <div className="flex-1 overflow-y-auto">
+
+// // //             {/* Welcome Screen */}
+// // //             {messages.length === 0 ? (
+// // //               <div className="flex min-h-[70vh] items-center justify-center px-5">
+
+// // //                 <div className="max-w-2xl text-center">
+
+// // //                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 text-4xl ring-1 ring-white/10">
+// // //                     🤖
+// // //                   </div>
+
+// // //                   <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+// // //                     Learn anything.
+
+// // //                     <span className="block bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+// // //                       Ask your AI tutor.
+// // //                     </span>
+// // //                   </h1>
+
+// // //                   <p className="mx-auto mt-5 max-w-xl text-gray-500">
+// // //                     Your personal AI Study Assistant for Python,
+// // //                     JavaScript, MERN, Machine Learning, Data Science
+// // //                     and Artificial Intelligence.
+// // //                   </p>
+
+// // //                   {/* Suggestions */}
+// // //                   <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+// // //                     <button
+// // //                       onClick={() =>
+// // //                         setMessage(
+// // //                           "Explain Python variables simply"
+// // //                         )
+// // //                       }
+// // //                       className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-purple-500/30 hover:bg-white/[0.06]"
+// // //                     >
+// // //                       <p className="text-sm font-medium">
+// // //                         🐍 Learn Python
+// // //                       </p>
+
+// // //                       <p className="mt-1 text-xs text-gray-500">
+// // //                         Explain Python variables simply
+// // //                       </p>
+// // //                     </button>
+
+// // //                     <button
+// // //                       onClick={() =>
+// // //                         setMessage(
+// // //                           "What is Machine Learning?"
+// // //                         )
+// // //                       }
+// // //                       className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-blue-500/30 hover:bg-white/[0.06]"
+// // //                     >
+// // //                       <p className="text-sm font-medium">
+// // //                         🧠 Learn ML
+// // //                       </p>
+
+// // //                       <p className="mt-1 text-xs text-gray-500">
+// // //                         What is Machine Learning?
+// // //                       </p>
+// // //                     </button>
+
+// // //                     <button
+// // //                       onClick={() =>
+// // //                         setMessage("Explain MERN stack")
+// // //                       }
+// // //                       className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-purple-500/30 hover:bg-white/[0.06]"
+// // //                     >
+// // //                       <p className="text-sm font-medium">
+// // //                         🌐 Learn MERN
+// // //                       </p>
+
+// // //                       <p className="mt-1 text-xs text-gray-500">
+// // //                         Explain MERN stack
+// // //                       </p>
+// // //                     </button>
+
+// // //                     <button
+// // //                       onClick={() =>
+// // //                         setMessage(
+// // //                           "What is Artificial Intelligence?"
+// // //                         )
+// // //                       }
+// // //                       className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-blue-500/30 hover:bg-white/[0.06]"
+// // //                     >
+// // //                       <p className="text-sm font-medium">
+// // //                         ✨ Learn AI
+// // //                       </p>
+
+// // //                       <p className="mt-1 text-xs text-gray-500">
+// // //                         What is Artificial Intelligence?
+// // //                       </p>
+// // //                     </button>
+
+// // //                   </div>
+// // //                 </div>
+// // //               </div>
+// // //             ) : (
+
+// // //               /* Messages */
+// // //               <div className="mx-auto max-w-4xl space-y-6 px-5 py-8">
+
+// // //                 {messages.map((msg, index) => (
+// // //                   <div
+// // //                     key={index}
+// // //                     className={`flex gap-3 ${
+// // //                       msg.role === "user"
+// // //                         ? "justify-end"
+// // //                         : "justify-start"
+// // //                     }`}
+// // //                   >
+
+// // //                     {/* AI Avatar */}
+// // //                     {msg.role === "assistant" && (
+// // //                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500">
+// // //                         🤖
+// // //                       </div>
+// // //                     )}
+
+// // //                     {/* Message */}
+// // //                     <div
+// // //                       className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+// // //                         msg.role === "user"
+// // //                           ? "bg-gradient-to-r from-purple-600 to-blue-600"
+// // //                           : "border border-white/10 bg-[#111318]"
+// // //                       }`}
+// // //                     >
+
+// // //                       <p className="mb-1 text-xs font-medium opacity-60">
+// // //                         {msg.role === "user"
+// // //                           ? "You"
+// // //                           : "StudyAI"}
+// // //                       </p>
+
+// // //                       <p className="whitespace-pre-wrap text-sm leading-7">
+// // //                         {msg.content}
+// // //                       </p>
+
+// // //                     </div>
+
+// // //                     {/* User Avatar */}
+// // //                     {msg.role === "user" && (
+// // //                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10">
+// // //                         👤
+// // //                       </div>
+// // //                     )}
+
+// // //                   </div>
+// // //                 ))}
+
+// // //                 {/* Loading */}
+// // //                 {loading && (
+// // //                   <div className="flex gap-3">
+
+// // //                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500">
+// // //                       🤖
+// // //                     </div>
+
+// // //                     <div className="rounded-2xl border border-white/10 bg-[#111318] px-5 py-3">
+
+// // //                       <div className="flex gap-1">
+// // //                         <span className="animate-bounce">
+// // //                           ●
+// // //                         </span>
+
+// // //                         <span className="animate-bounce [animation-delay:150ms]">
+// // //                           ●
+// // //                         </span>
+
+// // //                         <span className="animate-bounce [animation-delay:300ms]">
+// // //                           ●
+// // //                         </span>
+// // //                       </div>
+
+// // //                     </div>
+
+// // //                   </div>
+// // //                 )}
+
+// // //               </div>
+// // //             )}
+
+// // //           </div>
+
+// // //           {/* Input */}
+// // //           <div className="border-t border-white/10 bg-[#08090d] p-4">
+
+// // //             <div className="mx-auto max-w-4xl">
+
+// // //               <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-[#111318] p-2 shadow-2xl">
+
+// // //                 <input
+// // //                   type="text"
+// // //                   value={message}
+// // //                   onChange={(e) =>
+// // //                     setMessage(e.target.value)
+// // //                   }
+// // //                   onKeyDown={(e) => {
+// // //                     if (e.key === "Enter") {
+// // //                       sendMessage();
+// // //                     }
+// // //                   }}
+// // //                   placeholder="Ask your AI tutor..."
+// // //                   disabled={loading}
+// // //                   className="flex-1 bg-transparent px-3 py-3 text-sm text-white outline-none placeholder:text-gray-600"
+// // //                 />
+
+// // //                 <button
+// // //                   onClick={sendMessage}
+// // //                   disabled={
+// // //                     loading || !message.trim()
+// // //                   }
+// // //                   className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-lg transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-40"
+// // //                 >
+// // //                   ↑
+// // //                 </button>
+
+// // //               </div>
+
+// // //               <p className="mt-2 text-center text-[11px] text-gray-600">
+// // //                 AI Study Assistant can make mistakes.
+// // //                 Always verify important information.
+// // //               </p>
+
+// // //             </div>
+
+// // //           </div>
+
+// // //         </section>
+// // //       </div>
+// // //     </main>
+// // //   );
+// // // }
+
 // // "use client";
 
-// // import { useState } from "react";
+// // import { useEffect, useState } from "react";
 
 // // type Message = {
+// //   id?: number;
 // //   role: "user" | "assistant";
 // //   content: string;
+// // };
+
+// // type Conversation = {
+// //   id: number;
+// //   title: string;
 // // };
 
 // // export default function Home() {
@@ -12,15 +437,120 @@
 // //   const [messages, setMessages] = useState<Message[]>([]);
 // //   const [loading, setLoading] = useState(false);
 
+// //   const [conversations, setConversations] = useState<Conversation[]>([]);
+// //   const [conversationId, setConversationId] = useState<number | null>(null);
+// //   const [loadingHistory, setLoadingHistory] = useState(false);
+
+// //   const API_URL = "http://127.0.0.1:8000";
+
+// //   // Get JWT token
+// //   function getToken() {
+// //     return localStorage.getItem("access_token");
+// //   }
+
+// //   // Logout
+// //   function logout() {
+// //     localStorage.removeItem("access_token");
+// //     window.location.href = "/login";
+// //   }
+
+// //   // Load conversation history
+// //   async function loadConversations() {
+// //     const token = getToken();
+
+// //     if (!token) {
+// //       console.log("No access token found");
+// //       return;
+// //     }
+
+// //     try {
+// //       const response = await fetch(
+// //         `${API_URL}/conversations/`,
+// //         {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //           },
+// //         }
+// //       );
+
+// //       if (!response.ok) {
+// //         throw new Error("Failed to load conversations");
+// //       }
+
+// //       const data = await response.json();
+
+// //       setConversations(data);
+// //     } catch (error) {
+// //       console.error("Conversation history error:", error);
+// //     }
+// //   }
+
+// //   // Load messages of selected conversation
+// //   async function loadConversation(id: number) {
+// //     const token = getToken();
+
+// //     if (!token) {
+// //       console.log("No access token found");
+// //       return;
+// //     }
+
+// //     setLoadingHistory(true);
+
+// //     try {
+// //       const response = await fetch(
+// //         `${API_URL}/conversations/${id}/messages`,
+// //         {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //           },
+// //         }
+// //       );
+
+// //       if (!response.ok) {
+// //         throw new Error("Failed to load conversation");
+// //       }
+
+// //       const data = await response.json();
+
+// //       setMessages(data);
+// //       setConversationId(id);
+// //       setMessage("");
+// //     } catch (error) {
+// //       console.error("Load conversation error:", error);
+// //     } finally {
+// //       setLoadingHistory(false);
+// //     }
+// //   }
+
+// //   // Load conversations when page opens
+// //   useEffect(() => {
+// //     loadConversations();
+// //   }, []);
+
+// //   // Send message
 // //   async function sendMessage() {
 // //     if (!message.trim() || loading) return;
 
 // //     const userMessage = message.trim();
+// //     const token = getToken();
 
-// //     // Current conversation history before adding the new message
+// //     if (!token) {
+// //       setMessages((prev) => [
+// //         ...prev,
+// //         {
+// //           role: "assistant",
+// //           content:
+// //             "Please login first. Your authentication token was not found.",
+// //         },
+// //       ]);
+
+// //       return;
+// //     }
+
+// //     // Current conversation history before adding new message
 // //     const currentHistory = messages;
 
-// //     // Show user's message immediately
+// //     // Show user message immediately
 // //     setMessages((prev) => [
 // //       ...prev,
 // //       {
@@ -33,22 +563,32 @@
 // //     setLoading(true);
 
 // //     try {
-// //       const response = await fetch("http://127.0.0.1:8000/chat", {
-// //         method: "POST",
-// //         headers: {
-// //           "Content-Type": "application/json",
-// //         },
-// //         body: JSON.stringify({
-// //           message: userMessage,
-// //           history: currentHistory,
-// //         }),
-// //       });
+// //       const response = await fetch(
+// //         `${API_URL}/chat`,
+// //         {
+// //           method: "POST",
+
+// //           headers: {
+// //             "Content-Type": "application/json",
+// //             Authorization: `Bearer ${token}`,
+// //           },
+
+// //           body: JSON.stringify({
+// //             message: userMessage,
+// //             history: currentHistory,
+// //             conversation_id: conversationId,
+// //           }),
+// //         }
+// //       );
 
 // //       if (!response.ok) {
 // //         throw new Error("Failed to get response from server");
 // //       }
 
 // //       const data = await response.json();
+
+// //       // Save conversation ID
+// //       setConversationId(data.conversation_id);
 
 // //       // Add AI response
 // //       setMessages((prev) => [
@@ -58,6 +598,9 @@
 // //           content: data.answer,
 // //         },
 // //       ]);
+
+// //       // Refresh sidebar
+// //       await loadConversations();
 // //     } catch (error) {
 // //       console.error(error);
 
@@ -66,7 +609,7 @@
 // //         {
 // //           role: "assistant",
 // //           content:
-// //             "Sorry, something went wrong. Please check that the backend is running.",
+// //             "Sorry, something went wrong. Please check that the backend is running and you are logged in.",
 // //         },
 // //       ]);
 // //     } finally {
@@ -74,9 +617,11 @@
 // //     }
 // //   }
 
+// //   // Start new chat
 // //   function clearChat() {
 // //     setMessages([]);
 // //     setMessage("");
+// //     setConversationId(null);
 // //   }
 
 // //   return (
@@ -93,7 +638,9 @@
 // //             </div>
 
 // //             <div>
-// //               <h1 className="font-bold">StudyAI</h1>
+// //               <h1 className="font-bold">
+// //                 StudyAI
+// //               </h1>
 
 // //               <p className="text-xs text-gray-500">
 // //                 AI Study Assistant
@@ -110,8 +657,41 @@
 // //             New Chat
 // //           </button>
 
+// //           {/* Conversation History */}
+// //           <div className="mb-6 flex-1 overflow-y-auto">
+// //             <p className="mb-3 px-2 text-xs uppercase tracking-wider text-gray-500">
+// //               Chat History
+// //             </p>
+
+// //             {conversations.length === 0 ? (
+// //               <p className="px-2 text-xs text-gray-600">
+// //                 No conversations yet
+// //               </p>
+// //             ) : (
+// //               <div className="space-y-1">
+// //                 {conversations.map((conversation) => (
+// //                   <button
+// //                     key={conversation.id}
+// //                     onClick={() =>
+// //                       loadConversation(conversation.id)
+// //                     }
+// //                     className={`w-full rounded-xl px-3 py-2 text-left text-sm transition ${
+// //                       conversationId === conversation.id
+// //                         ? "bg-white/10 text-white"
+// //                         : "text-gray-400 hover:bg-white/5 hover:text-white"
+// //                     }`}
+// //                   >
+// //                     <div className="truncate">
+// //                       {conversation.title}
+// //                     </div>
+// //                   </button>
+// //                 ))}
+// //               </div>
+// //             )}
+// //           </div>
+
 // //           {/* Subjects */}
-// //           <div className="space-y-2">
+// //           <div className="space-y-1 border-t border-white/10 pt-4">
 // //             <p className="mb-3 px-2 text-xs uppercase tracking-wider text-gray-500">
 // //               Study
 // //             </p>
@@ -142,7 +722,7 @@
 // //           </div>
 
 // //           {/* Bottom */}
-// //           <div className="mt-auto rounded-xl border border-white/10 bg-white/5 p-4">
+// //           <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
 // //             <p className="text-sm font-medium">
 // //               AI Study Assistant
 // //             </p>
@@ -173,19 +753,39 @@
 // //               </div>
 // //             </div>
 
-// //             <button
-// //               onClick={clearChat}
-// //               className="rounded-lg border border-white/10 px-3 py-2 text-xs text-gray-400 transition hover:bg-white/5 hover:text-white"
-// //             >
-// //               Clear Chat
-// //             </button>
+// //             {/* Header Buttons */}
+// //             <div className="flex items-center gap-2">
+
+// //               <button
+// //                 onClick={clearChat}
+// //                 className="rounded-lg border border-white/10 px-3 py-2 text-xs text-gray-400 transition hover:bg-white/5 hover:text-white"
+// //               >
+// //                 Clear Chat
+// //               </button>
+
+// //               <button
+// //                 onClick={logout}
+// //                 className="rounded-lg border border-red-500/20 px-3 py-2 text-xs text-red-400 transition hover:bg-red-500/10 hover:text-red-300"
+// //               >
+// //                 Logout
+// //               </button>
+
+// //             </div>
 // //           </header>
 
 // //           {/* Chat Area */}
 // //           <div className="flex-1 overflow-y-auto">
 
-// //             {/* Welcome Screen */}
-// //             {messages.length === 0 ? (
+// //             {/* Loading History */}
+// //             {loadingHistory ? (
+// //               <div className="flex min-h-[70vh] items-center justify-center">
+// //                 <p className="text-sm text-gray-500">
+// //                   Loading conversation...
+// //                 </p>
+// //               </div>
+// //             ) : messages.length === 0 ? (
+
+// //               /* Welcome Screen */
 // //               <div className="flex min-h-[70vh] items-center justify-center px-5">
 
 // //                 <div className="max-w-2xl text-center">
@@ -280,6 +880,7 @@
 // //                   </div>
 // //                 </div>
 // //               </div>
+
 // //             ) : (
 
 // //               /* Messages */
@@ -287,7 +888,7 @@
 
 // //                 {messages.map((msg, index) => (
 // //                   <div
-// //                     key={index}
+// //                     key={msg.id ?? index}
 // //                     className={`flex gap-3 ${
 // //                       msg.role === "user"
 // //                         ? "justify-end"
@@ -441,6 +1042,11 @@
 //   const [conversationId, setConversationId] = useState<number | null>(null);
 //   const [loadingHistory, setLoadingHistory] = useState(false);
 
+//   // PDF states
+//   const [pdfFile, setPdfFile] = useState<File | null>(null);
+//   const [pdfUploading, setPdfUploading] = useState(false);
+//   const [pdfResult, setPdfResult] = useState("");
+
 //   const API_URL = "http://127.0.0.1:8000";
 
 //   // Get JWT token
@@ -481,7 +1087,10 @@
 
 //       setConversations(data);
 //     } catch (error) {
-//       console.error("Conversation history error:", error);
+//       console.error(
+//         "Conversation history error:",
+//         error
+//       );
 //     }
 //   }
 
@@ -507,7 +1116,9 @@
 //       );
 
 //       if (!response.ok) {
-//         throw new Error("Failed to load conversation");
+//         throw new Error(
+//           "Failed to load conversation"
+//         );
 //       }
 
 //       const data = await response.json();
@@ -515,8 +1126,12 @@
 //       setMessages(data);
 //       setConversationId(id);
 //       setMessage("");
+//       setPdfResult("");
 //     } catch (error) {
-//       console.error("Load conversation error:", error);
+//       console.error(
+//         "Load conversation error:",
+//         error
+//       );
 //     } finally {
 //       setLoadingHistory(false);
 //     }
@@ -526,6 +1141,64 @@
 //   useEffect(() => {
 //     loadConversations();
 //   }, []);
+
+//   // Upload PDF
+//   async function uploadPDF() {
+//     if (!pdfFile || pdfUploading) return;
+
+//     const token = getToken();
+
+//     if (!token) {
+//       alert("Please login first.");
+//       return;
+//     }
+
+//     setPdfUploading(true);
+//     setPdfResult("");
+
+//     const formData = new FormData();
+
+//     formData.append("file", pdfFile);
+
+//     try {
+//       const response = await fetch(
+//         `${API_URL}/pdf/upload`,
+//         {
+//           method: "POST",
+
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+
+//           body: formData,
+//         }
+//       );
+
+//       const data = await response.json();
+
+//       if (!response.ok) {
+//         throw new Error(
+//           data.detail || "PDF upload failed"
+//         );
+//       }
+
+//       setPdfResult(
+//         data.text_preview ||
+//           "PDF uploaded successfully."
+//       );
+//     } catch (error) {
+//       console.error(
+//         "PDF upload error:",
+//         error
+//       );
+
+//       setPdfResult(
+//         "PDF upload failed. Please try again."
+//       );
+//     } finally {
+//       setPdfUploading(false);
+//     }
+//   }
 
 //   // Send message
 //   async function sendMessage() {
@@ -547,7 +1220,7 @@
 //       return;
 //     }
 
-//     // Current conversation history before adding new message
+//     // Current conversation history
 //     const currentHistory = messages;
 
 //     // Show user message immediately
@@ -582,13 +1255,17 @@
 //       );
 
 //       if (!response.ok) {
-//         throw new Error("Failed to get response from server");
+//         throw new Error(
+//           "Failed to get response from server"
+//         );
 //       }
 
 //       const data = await response.json();
 
 //       // Save conversation ID
-//       setConversationId(data.conversation_id);
+//       setConversationId(
+//         data.conversation_id
+//       );
 
 //       // Add AI response
 //       setMessages((prev) => [
@@ -622,6 +1299,8 @@
 //     setMessages([]);
 //     setMessage("");
 //     setConversationId(null);
+//     setPdfResult("");
+//     setPdfFile(null);
 //   }
 
 //   return (
@@ -633,6 +1312,7 @@
 
 //           {/* Logo */}
 //           <div className="mb-8 flex items-center gap-3">
+
 //             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 text-xl">
 //               🤖
 //             </div>
@@ -646,6 +1326,7 @@
 //                 AI Study Assistant
 //               </p>
 //             </div>
+
 //           </div>
 
 //           {/* New Chat */}
@@ -659,39 +1340,57 @@
 
 //           {/* Conversation History */}
 //           <div className="mb-6 flex-1 overflow-y-auto">
+
 //             <p className="mb-3 px-2 text-xs uppercase tracking-wider text-gray-500">
 //               Chat History
 //             </p>
 
 //             {conversations.length === 0 ? (
+
 //               <p className="px-2 text-xs text-gray-600">
 //                 No conversations yet
 //               </p>
+
 //             ) : (
+
 //               <div className="space-y-1">
-//                 {conversations.map((conversation) => (
-//                   <button
-//                     key={conversation.id}
-//                     onClick={() =>
-//                       loadConversation(conversation.id)
-//                     }
-//                     className={`w-full rounded-xl px-3 py-2 text-left text-sm transition ${
-//                       conversationId === conversation.id
-//                         ? "bg-white/10 text-white"
-//                         : "text-gray-400 hover:bg-white/5 hover:text-white"
-//                     }`}
-//                   >
-//                     <div className="truncate">
-//                       {conversation.title}
-//                     </div>
-//                   </button>
-//                 ))}
+
+//                 {conversations.map(
+//                   (conversation) => (
+
+//                     <button
+//                       key={conversation.id}
+//                       onClick={() =>
+//                         loadConversation(
+//                           conversation.id
+//                         )
+//                       }
+//                       className={`w-full rounded-xl px-3 py-2 text-left text-sm transition ${
+//                         conversationId ===
+//                         conversation.id
+//                           ? "bg-white/10 text-white"
+//                           : "text-gray-400 hover:bg-white/5 hover:text-white"
+//                       }`}
+//                     >
+
+//                       <div className="truncate">
+//                         {conversation.title}
+//                       </div>
+
+//                     </button>
+
+//                   )
+//                 )}
+
 //               </div>
+
 //             )}
+
 //           </div>
 
 //           {/* Subjects */}
 //           <div className="space-y-1 border-t border-white/10 pt-4">
+
 //             <p className="mb-3 px-2 text-xs uppercase tracking-wider text-gray-500">
 //               Study
 //             </p>
@@ -719,10 +1418,12 @@
 //             <button className="w-full rounded-xl px-3 py-2 text-left text-sm text-gray-300 transition hover:bg-white/5">
 //               ✨ Artificial Intelligence
 //             </button>
+
 //           </div>
 
 //           {/* Bottom */}
 //           <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
+
 //             <p className="text-sm font-medium">
 //               AI Study Assistant
 //             </p>
@@ -730,7 +1431,9 @@
 //             <p className="mt-1 text-xs text-gray-500">
 //               Learn smarter with AI.
 //             </p>
+
 //           </div>
+
 //         </aside>
 
 //         {/* Main Chat */}
@@ -740,17 +1443,21 @@
 //           <header className="flex items-center justify-between border-b border-white/10 bg-[#0b0d12]/80 px-5 py-4 backdrop-blur">
 
 //             <div>
+
 //               <h2 className="font-semibold">
 //                 AI Study Assistant
 //               </h2>
 
 //               <div className="mt-1 flex items-center gap-2">
+
 //                 <span className="h-2 w-2 rounded-full bg-green-400"></span>
 
 //                 <span className="text-xs text-gray-500">
 //                   Online
 //                 </span>
+
 //               </div>
+
 //             </div>
 
 //             {/* Header Buttons */}
@@ -771,6 +1478,7 @@
 //               </button>
 
 //             </div>
+
 //           </header>
 
 //           {/* Chat Area */}
@@ -778,11 +1486,15 @@
 
 //             {/* Loading History */}
 //             {loadingHistory ? (
+
 //               <div className="flex min-h-[70vh] items-center justify-center">
+
 //                 <p className="text-sm text-gray-500">
 //                   Loading conversation...
 //                 </p>
+
 //               </div>
+
 //             ) : messages.length === 0 ? (
 
 //               /* Welcome Screen */
@@ -795,17 +1507,22 @@
 //                   </div>
 
 //                   <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+
 //                     Learn anything.
 
 //                     <span className="block bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
 //                       Ask your AI tutor.
 //                     </span>
+
 //                   </h1>
 
 //                   <p className="mx-auto mt-5 max-w-xl text-gray-500">
-//                     Your personal AI Study Assistant for Python,
-//                     JavaScript, MERN, Machine Learning, Data Science
+
+//                     Your personal AI Study Assistant
+//                     for Python, JavaScript, MERN,
+//                     Machine Learning, Data Science
 //                     and Artificial Intelligence.
+
 //                   </p>
 
 //                   {/* Suggestions */}
@@ -819,6 +1536,7 @@
 //                       }
 //                       className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-purple-500/30 hover:bg-white/[0.06]"
 //                     >
+
 //                       <p className="text-sm font-medium">
 //                         🐍 Learn Python
 //                       </p>
@@ -826,6 +1544,7 @@
 //                       <p className="mt-1 text-xs text-gray-500">
 //                         Explain Python variables simply
 //                       </p>
+
 //                     </button>
 
 //                     <button
@@ -836,6 +1555,7 @@
 //                       }
 //                       className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-blue-500/30 hover:bg-white/[0.06]"
 //                     >
+
 //                       <p className="text-sm font-medium">
 //                         🧠 Learn ML
 //                       </p>
@@ -843,14 +1563,18 @@
 //                       <p className="mt-1 text-xs text-gray-500">
 //                         What is Machine Learning?
 //                       </p>
+
 //                     </button>
 
 //                     <button
 //                       onClick={() =>
-//                         setMessage("Explain MERN stack")
+//                         setMessage(
+//                           "Explain MERN stack"
+//                         )
 //                       }
 //                       className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-purple-500/30 hover:bg-white/[0.06]"
 //                     >
+
 //                       <p className="text-sm font-medium">
 //                         🌐 Learn MERN
 //                       </p>
@@ -858,6 +1582,7 @@
 //                       <p className="mt-1 text-xs text-gray-500">
 //                         Explain MERN stack
 //                       </p>
+
 //                     </button>
 
 //                     <button
@@ -868,6 +1593,7 @@
 //                       }
 //                       className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-blue-500/30 hover:bg-white/[0.06]"
 //                     >
+
 //                       <p className="text-sm font-medium">
 //                         ✨ Learn AI
 //                       </p>
@@ -875,10 +1601,13 @@
 //                       <p className="mt-1 text-xs text-gray-500">
 //                         What is Artificial Intelligence?
 //                       </p>
+
 //                     </button>
 
 //                   </div>
+
 //                 </div>
+
 //               </div>
 
 //             ) : (
@@ -886,56 +1615,64 @@
 //               /* Messages */
 //               <div className="mx-auto max-w-4xl space-y-6 px-5 py-8">
 
-//                 {messages.map((msg, index) => (
-//                   <div
-//                     key={msg.id ?? index}
-//                     className={`flex gap-3 ${
-//                       msg.role === "user"
-//                         ? "justify-end"
-//                         : "justify-start"
-//                     }`}
-//                   >
+//                 {messages.map(
+//                   (msg, index) => (
 
-//                     {/* AI Avatar */}
-//                     {msg.role === "assistant" && (
-//                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500">
-//                         🤖
-//                       </div>
-//                     )}
-
-//                     {/* Message */}
 //                     <div
-//                       className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+//                       key={
+//                         msg.id ?? index
+//                       }
+//                       className={`flex gap-3 ${
 //                         msg.role === "user"
-//                           ? "bg-gradient-to-r from-purple-600 to-blue-600"
-//                           : "border border-white/10 bg-[#111318]"
+//                           ? "justify-end"
+//                           : "justify-start"
 //                       }`}
 //                     >
 
-//                       <p className="mb-1 text-xs font-medium opacity-60">
-//                         {msg.role === "user"
-//                           ? "You"
-//                           : "StudyAI"}
-//                       </p>
+//                       {/* AI Avatar */}
+//                       {msg.role ===
+//                         "assistant" && (
+//                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500">
+//                           🤖
+//                         </div>
+//                       )}
 
-//                       <p className="whitespace-pre-wrap text-sm leading-7">
-//                         {msg.content}
-//                       </p>
+//                       {/* Message */}
+//                       <div
+//                         className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+//                           msg.role === "user"
+//                             ? "bg-gradient-to-r from-purple-600 to-blue-600"
+//                             : "border border-white/10 bg-[#111318]"
+//                         }`}
+//                       >
+
+//                         <p className="mb-1 text-xs font-medium opacity-60">
+//                           {msg.role === "user"
+//                             ? "You"
+//                             : "StudyAI"}
+//                         </p>
+
+//                         <p className="whitespace-pre-wrap text-sm leading-7">
+//                           {msg.content}
+//                         </p>
+
+//                       </div>
+
+//                       {/* User Avatar */}
+//                       {msg.role === "user" && (
+//                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10">
+//                           👤
+//                         </div>
+//                       )}
 
 //                     </div>
 
-//                     {/* User Avatar */}
-//                     {msg.role === "user" && (
-//                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10">
-//                         👤
-//                       </div>
-//                     )}
-
-//                   </div>
-//                 ))}
+//                   )
+//                 )}
 
 //                 {/* Loading */}
 //                 {loading && (
+
 //                   <div className="flex gap-3">
 
 //                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500">
@@ -945,6 +1682,7 @@
 //                     <div className="rounded-2xl border border-white/10 bg-[#111318] px-5 py-3">
 
 //                       <div className="flex gap-1">
+
 //                         <span className="animate-bounce">
 //                           ●
 //                         </span>
@@ -956,33 +1694,104 @@
 //                         <span className="animate-bounce [animation-delay:300ms]">
 //                           ●
 //                         </span>
+
 //                       </div>
 
 //                     </div>
 
 //                   </div>
+
 //                 )}
 
 //               </div>
+
 //             )}
 
 //           </div>
 
-//           {/* Input */}
+//           {/* Input Area */}
 //           <div className="border-t border-white/10 bg-[#08090d] p-4">
 
 //             <div className="mx-auto max-w-4xl">
 
+//               {/* PDF Upload */}
+//               <div className="mb-3 rounded-xl border border-white/10 bg-[#111318] p-3">
+
+//                 <div className="flex flex-wrap items-center gap-3">
+
+//                   <input
+//                     type="file"
+//                     accept=".pdf,application/pdf"
+//                     onChange={(e) => {
+//                       const file =
+//                         e.target.files?.[0] ||
+//                         null;
+
+//                       setPdfFile(file);
+//                       setPdfResult("");
+//                     }}
+//                     className="max-w-full text-xs text-gray-400"
+//                   />
+
+//                   <button
+//                     onClick={uploadPDF}
+//                     disabled={
+//                       !pdfFile ||
+//                       pdfUploading
+//                     }
+//                     className="rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-2 text-xs font-medium transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+//                   >
+//                     {pdfUploading
+//                       ? "Uploading..."
+//                       : "Upload PDF"}
+//                   </button>
+
+//                 </div>
+
+//                 {/* Selected File */}
+//                 {pdfFile && (
+
+//                   <p className="mt-2 text-xs text-gray-500">
+//                     Selected:{" "}
+//                     {pdfFile.name}
+//                   </p>
+
+//                 )}
+
+//                 {/* PDF Result */}
+//                 {pdfResult && (
+
+//                   <div className="mt-3 max-h-40 overflow-y-auto rounded-lg border border-white/10 bg-black/20 p-3">
+
+//                     <p className="mb-2 text-xs font-medium text-purple-400">
+//                       Extracted PDF Text
+//                     </p>
+
+//                     <p className="whitespace-pre-wrap text-xs leading-6 text-gray-400">
+//                       {pdfResult}
+//                     </p>
+
+//                   </div>
+
+//                 )}
+
+//               </div>
+
+//               {/* Chat Input */}
 //               <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-[#111318] p-2 shadow-2xl">
 
 //                 <input
 //                   type="text"
 //                   value={message}
 //                   onChange={(e) =>
-//                     setMessage(e.target.value)
+//                     setMessage(
+//                       e.target.value
+//                     )
 //                   }
 //                   onKeyDown={(e) => {
-//                     if (e.key === "Enter") {
+//                     if (
+//                       e.key === "Enter"
+//                     ) {
 //                       sendMessage();
 //                     }
 //                   }}
@@ -994,7 +1803,8 @@
 //                 <button
 //                   onClick={sendMessage}
 //                   disabled={
-//                     loading || !message.trim()
+//                     loading ||
+//                     !message.trim()
 //                   }
 //                   className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-lg transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-40"
 //                 >
@@ -1004,8 +1814,9 @@
 //               </div>
 
 //               <p className="mt-2 text-center text-[11px] text-gray-600">
-//                 AI Study Assistant can make mistakes.
-//                 Always verify important information.
+//                 AI Study Assistant can make
+//                 mistakes. Always verify important
+//                 information.
 //               </p>
 
 //             </div>
@@ -1013,10 +1824,12 @@
 //           </div>
 
 //         </section>
+
 //       </div>
 //     </main>
 //   );
 // }
+
 
 "use client";
 
@@ -1042,25 +1855,46 @@ export default function Home() {
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
-  // PDF states
+  // ==============================
+  // PDF STATES
+  // ==============================
+
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfUploading, setPdfUploading] = useState(false);
+  const [pdfUploaded, setPdfUploaded] = useState(false);
   const [pdfResult, setPdfResult] = useState("");
+
+  // ==============================
+  // PDF QUESTION STATES
+  // ==============================
+
+  const [pdfQuestion, setPdfQuestion] = useState("");
+  const [pdfAnswer, setPdfAnswer] = useState("");
+  const [pdfAsking, setPdfAsking] = useState(false);
 
   const API_URL = "http://127.0.0.1:8000";
 
-  // Get JWT token
+  // ==============================
+  // GET JWT TOKEN
+  // ==============================
+
   function getToken() {
     return localStorage.getItem("access_token");
   }
 
-  // Logout
+  // ==============================
+  // LOGOUT
+  // ==============================
+
   function logout() {
     localStorage.removeItem("access_token");
     window.location.href = "/login";
   }
 
-  // Load conversation history
+  // ==============================
+  // LOAD CONVERSATIONS
+  // ==============================
+
   async function loadConversations() {
     const token = getToken();
 
@@ -1094,7 +1928,10 @@ export default function Home() {
     }
   }
 
-  // Load messages of selected conversation
+  // ==============================
+  // LOAD SELECTED CONVERSATION
+  // ==============================
+
   async function loadConversation(id: number) {
     const token = getToken();
 
@@ -1126,7 +1963,10 @@ export default function Home() {
       setMessages(data);
       setConversationId(id);
       setMessage("");
-      setPdfResult("");
+
+      // Reset PDF Q&A
+      setPdfQuestion("");
+      setPdfAnswer("");
     } catch (error) {
       console.error(
         "Load conversation error:",
@@ -1137,14 +1977,22 @@ export default function Home() {
     }
   }
 
-  // Load conversations when page opens
+  // ==============================
+  // LOAD CONVERSATIONS ON PAGE LOAD
+  // ==============================
+
   useEffect(() => {
     loadConversations();
   }, []);
 
-  // Upload PDF
+  // ==============================
+  // UPLOAD PDF
+  // ==============================
+
   async function uploadPDF() {
-    if (!pdfFile || pdfUploading) return;
+    if (!pdfFile || pdfUploading) {
+      return;
+    }
 
     const token = getToken();
 
@@ -1155,6 +2003,8 @@ export default function Home() {
 
     setPdfUploading(true);
     setPdfResult("");
+    setPdfAnswer("");
+    setPdfQuestion("");
 
     const formData = new FormData();
 
@@ -1182,9 +2032,21 @@ export default function Home() {
         );
       }
 
+      setPdfUploaded(true);
+
       setPdfResult(
         data.text_preview ||
-          "PDF uploaded successfully."
+          `PDF uploaded successfully.
+
+Filename: ${data.filename || pdfFile.name}
+
+Total characters: ${
+            data.total_characters || "N/A"
+          }
+
+Total chunks: ${
+            data.total_chunks || "N/A"
+          }`
       );
     } catch (error) {
       console.error(
@@ -1192,19 +2054,86 @@ export default function Home() {
         error
       );
 
+      setPdfUploaded(false);
+
       setPdfResult(
-        "PDF upload failed. Please try again."
+        "PDF upload failed. Please check that the backend is running and try again."
       );
     } finally {
       setPdfUploading(false);
     }
   }
 
-  // Send message
+  // ==============================
+  // ASK QUESTION FROM PDF
+  // ==============================
+
+  async function askPDF() {
+    if (!pdfQuestion.trim() || pdfAsking) {
+      return;
+    }
+
+    const token = getToken();
+
+    if (!token) {
+      alert("Please login first.");
+      return;
+    }
+
+    setPdfAsking(true);
+    setPdfAnswer("");
+
+    try {
+      const response = await fetch(
+        `${API_URL}/pdf/ask`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+
+          body: JSON.stringify({
+            query: pdfQuestion.trim(),
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.detail || "Failed to get PDF answer"
+        );
+      }
+
+      setPdfAnswer(data.answer);
+    } catch (error) {
+      console.error(
+        "PDF question error:",
+        error
+      );
+
+      setPdfAnswer(
+        "Sorry, I could not answer your question from the PDF. Please make sure the PDF is uploaded and try again."
+      );
+    } finally {
+      setPdfAsking(false);
+    }
+  }
+
+  // ==============================
+  // SEND NORMAL CHAT MESSAGE
+  // ==============================
+
   async function sendMessage() {
-    if (!message.trim() || loading) return;
+    if (!message.trim() || loading) {
+      return;
+    }
 
     const userMessage = message.trim();
+
     const token = getToken();
 
     if (!token) {
@@ -1294,23 +2223,44 @@ export default function Home() {
     }
   }
 
-  // Start new chat
+  // ==============================
+  // START NEW CHAT
+  // ==============================
+
   function clearChat() {
     setMessages([]);
     setMessage("");
     setConversationId(null);
-    setPdfResult("");
+
+    // Reset PDF
     setPdfFile(null);
+    setPdfUploaded(false);
+    setPdfUploading(false);
+    setPdfResult("");
+
+    // Reset PDF Q&A
+    setPdfQuestion("");
+    setPdfAnswer("");
+    setPdfAsking(false);
   }
+
+  // ==============================
+  // UI
+  // ==============================
 
   return (
     <main className="min-h-screen bg-[#08090d] text-white">
+
       <div className="flex min-h-screen">
 
-        {/* Sidebar */}
+        {/* ========================================= */}
+        {/* SIDEBAR */}
+        {/* ========================================= */}
+
         <aside className="hidden w-64 border-r border-white/10 bg-[#0d0f14] p-4 md:flex md:flex-col">
 
           {/* Logo */}
+
           <div className="mb-8 flex items-center gap-3">
 
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 text-xl">
@@ -1318,6 +2268,7 @@ export default function Home() {
             </div>
 
             <div>
+
               <h1 className="font-bold">
                 StudyAI
               </h1>
@@ -1325,20 +2276,24 @@ export default function Home() {
               <p className="text-xs text-gray-500">
                 AI Study Assistant
               </p>
+
             </div>
 
           </div>
 
           {/* New Chat */}
+
           <button
             onClick={clearChat}
             className="mb-6 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm transition hover:bg-white/10"
           >
             <span>＋</span>
+
             New Chat
           </button>
 
           {/* Conversation History */}
+
           <div className="mb-6 flex-1 overflow-y-auto">
 
             <p className="mb-3 px-2 text-xs uppercase tracking-wider text-gray-500">
@@ -1389,6 +2344,7 @@ export default function Home() {
           </div>
 
           {/* Subjects */}
+
           <div className="space-y-1 border-t border-white/10 pt-4">
 
             <p className="mb-3 px-2 text-xs uppercase tracking-wider text-gray-500">
@@ -1422,6 +2378,7 @@ export default function Home() {
           </div>
 
           {/* Bottom */}
+
           <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
 
             <p className="text-sm font-medium">
@@ -1436,10 +2393,14 @@ export default function Home() {
 
         </aside>
 
-        {/* Main Chat */}
+        {/* ========================================= */}
+        {/* MAIN */}
+        {/* ========================================= */}
+
         <section className="flex min-h-screen flex-1 flex-col">
 
           {/* Header */}
+
           <header className="flex items-center justify-between border-b border-white/10 bg-[#0b0d12]/80 px-5 py-4 backdrop-blur">
 
             <div>
@@ -1461,6 +2422,7 @@ export default function Home() {
             </div>
 
             {/* Header Buttons */}
+
             <div className="flex items-center gap-2">
 
               <button
@@ -1481,10 +2443,14 @@ export default function Home() {
 
           </header>
 
-          {/* Chat Area */}
+          {/* ========================================= */}
+          {/* CHAT AREA */}
+          {/* ========================================= */}
+
           <div className="flex-1 overflow-y-auto">
 
             {/* Loading History */}
+
             {loadingHistory ? (
 
               <div className="flex min-h-[70vh] items-center justify-center">
@@ -1497,7 +2463,10 @@ export default function Home() {
 
             ) : messages.length === 0 ? (
 
-              /* Welcome Screen */
+              /* ===================================== */
+              /* WELCOME */
+              /* ===================================== */
+
               <div className="flex min-h-[70vh] items-center justify-center px-5">
 
                 <div className="max-w-2xl text-center">
@@ -1526,6 +2495,7 @@ export default function Home() {
                   </p>
 
                   {/* Suggestions */}
+
                   <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
 
                     <button
@@ -1612,7 +2582,10 @@ export default function Home() {
 
             ) : (
 
-              /* Messages */
+              /* ===================================== */
+              /* MESSAGES */
+              /* ===================================== */
+
               <div className="mx-auto max-w-4xl space-y-6 px-5 py-8">
 
                 {messages.map(
@@ -1630,14 +2603,18 @@ export default function Home() {
                     >
 
                       {/* AI Avatar */}
+
                       {msg.role ===
                         "assistant" && (
+
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500">
                           🤖
                         </div>
+
                       )}
 
                       {/* Message */}
+
                       <div
                         className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                           msg.role === "user"
@@ -1647,9 +2624,11 @@ export default function Home() {
                       >
 
                         <p className="mb-1 text-xs font-medium opacity-60">
+
                           {msg.role === "user"
                             ? "You"
                             : "StudyAI"}
+
                         </p>
 
                         <p className="whitespace-pre-wrap text-sm leading-7">
@@ -1659,10 +2638,13 @@ export default function Home() {
                       </div>
 
                       {/* User Avatar */}
+
                       {msg.role === "user" && (
+
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10">
                           👤
                         </div>
+
                       )}
 
                     </div>
@@ -1671,6 +2653,7 @@ export default function Home() {
                 )}
 
                 {/* Loading */}
+
                 {loading && (
 
                   <div className="flex gap-3">
@@ -1709,13 +2692,47 @@ export default function Home() {
 
           </div>
 
-          {/* Input Area */}
+          {/* ========================================= */}
+          {/* INPUT AREA */}
+          {/* ========================================= */}
+
           <div className="border-t border-white/10 bg-[#08090d] p-4">
 
             <div className="mx-auto max-w-4xl">
 
-              {/* PDF Upload */}
-              <div className="mb-3 rounded-xl border border-white/10 bg-[#111318] p-3">
+              {/* ===================================== */}
+              {/* PDF SECTION */}
+              {/* ===================================== */}
+
+              <div className="mb-3 rounded-2xl border border-white/10 bg-[#111318] p-4">
+
+                {/* PDF Header */}
+
+                <div className="mb-3 flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-sm font-semibold">
+                      📄 PDF Study
+                    </p>
+
+                    <p className="mt-1 text-xs text-gray-500">
+                      Upload a PDF and ask questions about it.
+                    </p>
+
+                  </div>
+
+                  {pdfUploaded && (
+
+                    <span className="rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1 text-[11px] text-green-400">
+                      ✓ PDF Ready
+                    </span>
+
+                  )}
+
+                </div>
+
+                {/* Upload Controls */}
 
                 <div className="flex flex-wrap items-center gap-3">
 
@@ -1723,14 +2740,20 @@ export default function Home() {
                     type="file"
                     accept=".pdf,application/pdf"
                     onChange={(e) => {
+
                       const file =
                         e.target.files?.[0] ||
                         null;
 
                       setPdfFile(file);
+
+                      setPdfUploaded(false);
                       setPdfResult("");
+                      setPdfAnswer("");
+                      setPdfQuestion("");
+
                     }}
-                    className="max-w-full text-xs text-gray-400"
+                    className="max-w-full text-xs text-gray-400 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-xs file:text-gray-300 hover:file:bg-white/20"
                   />
 
                   <button
@@ -1741,30 +2764,38 @@ export default function Home() {
                     }
                     className="rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-2 text-xs font-medium transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                   >
+
                     {pdfUploading
                       ? "Uploading..."
                       : "Upload PDF"}
+
                   </button>
 
                 </div>
 
                 {/* Selected File */}
+
                 {pdfFile && (
 
                   <p className="mt-2 text-xs text-gray-500">
+
                     Selected:{" "}
-                    {pdfFile.name}
+                    <span className="text-gray-400">
+                      {pdfFile.name}
+                    </span>
+
                   </p>
 
                 )}
 
-                {/* PDF Result */}
+                {/* Upload Result */}
+
                 {pdfResult && (
 
-                  <div className="mt-3 max-h-40 overflow-y-auto rounded-lg border border-white/10 bg-black/20 p-3">
+                  <div className="mt-3 max-h-32 overflow-y-auto rounded-lg border border-white/10 bg-black/20 p-3">
 
                     <p className="mb-2 text-xs font-medium text-purple-400">
-                      Extracted PDF Text
+                      PDF Status
                     </p>
 
                     <p className="whitespace-pre-wrap text-xs leading-6 text-gray-400">
@@ -1775,9 +2806,95 @@ export default function Home() {
 
                 )}
 
+                {/* ================================= */}
+                {/* ASK PDF */}
+                {/* ================================= */}
+
+                {pdfUploaded && (
+
+                  <div className="mt-4 border-t border-white/10 pt-4">
+
+                    <p className="mb-2 text-xs font-medium text-purple-400">
+                      🔎 Ask a question about your PDF
+                    </p>
+
+                    <div className="flex gap-2">
+
+                      <input
+                        type="text"
+                        value={pdfQuestion}
+                        onChange={(e) =>
+                          setPdfQuestion(
+                            e.target.value
+                          )
+                        }
+                        onKeyDown={(e) => {
+
+                          if (
+                            e.key === "Enter"
+                          ) {
+                            askPDF();
+                          }
+
+                        }}
+                        placeholder="What is this PDF about?"
+                        disabled={pdfAsking}
+                        className="flex-1 rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-gray-600 focus:border-purple-500/40"
+                      />
+
+                      <button
+                        onClick={askPDF}
+                        disabled={
+                          pdfAsking ||
+                          !pdfQuestion.trim()
+                        }
+                        className="rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-5 py-3 text-sm font-medium transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+
+                        {pdfAsking
+                          ? "Thinking..."
+                          : "Ask PDF"}
+
+                      </button>
+
+                    </div>
+
+                    {/* PDF Answer */}
+
+                    {pdfAnswer && (
+
+                      <div className="mt-4 rounded-xl border border-purple-500/20 bg-purple-500/5 p-4">
+
+                        <div className="mb-2 flex items-center gap-2">
+
+                          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 text-sm">
+                            🤖
+                          </div>
+
+                          <p className="text-xs font-semibold text-purple-300">
+                            StudyAI — PDF Answer
+                          </p>
+
+                        </div>
+
+                        <p className="whitespace-pre-wrap text-sm leading-7 text-gray-300">
+                          {pdfAnswer}
+                        </p>
+
+                      </div>
+
+                    )}
+
+                  </div>
+
+                )}
+
               </div>
 
-              {/* Chat Input */}
+              {/* ===================================== */}
+              {/* NORMAL CHAT INPUT */}
+              {/* ===================================== */}
+
               <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-[#111318] p-2 shadow-2xl">
 
                 <input
@@ -1789,11 +2906,13 @@ export default function Home() {
                     )
                   }
                   onKeyDown={(e) => {
+
                     if (
                       e.key === "Enter"
                     ) {
                       sendMessage();
                     }
+
                   }}
                   placeholder="Ask your AI tutor..."
                   disabled={loading}
@@ -1814,9 +2933,11 @@ export default function Home() {
               </div>
 
               <p className="mt-2 text-center text-[11px] text-gray-600">
+
                 AI Study Assistant can make
                 mistakes. Always verify important
                 information.
+
               </p>
 
             </div>
@@ -1826,6 +2947,7 @@ export default function Home() {
         </section>
 
       </div>
+
     </main>
   );
 }
