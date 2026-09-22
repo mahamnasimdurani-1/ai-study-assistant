@@ -1,0 +1,6 @@
+# ChromaDB local database
+chroma_db/
+
+# Temporary embedding tests
+test_chroma.py
+test_embedding.py

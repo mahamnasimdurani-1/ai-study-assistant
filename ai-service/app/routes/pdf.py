@@ -1,7 +1,13 @@
 # from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+
 # from app.auth import get_current_user
 # from app.models.user import User
+
 # from app.services.pdf_service import extract_text_from_pdf
+# from app.services.chunk_service import chunk_text
+# from app.services.embedding_service import create_embedding
+# from app.services.chroma_service import add_documents
+
 # import tempfile
 # import os
 
@@ -17,50 +23,81 @@
 #     file: UploadFile = File(...),
 #     current_user: User = Depends(get_current_user)
 # ):
-#     # Check file type
+#     # Step 1: Check file type
 #     if file.content_type != "application/pdf":
 #         raise HTTPException(
 #             status_code=400,
 #             detail="Only PDF files are allowed"
 #         )
 
-#     # Read uploaded file
+#     # Step 2: Read uploaded PDF
 #     file_content = await file.read()
 
-#     # Create temporary PDF file
+#     # Step 3: Create temporary PDF file
 #     with tempfile.NamedTemporaryFile(
 #         delete=False,
 #         suffix=".pdf"
 #     ) as temp_file:
 
 #         temp_file.write(file_content)
+
 #         temp_file_path = temp_file.name
 
 #     try:
-#         # Extract text
+#         # Step 4: Extract text from PDF
 #         extracted_text = extract_text_from_pdf(
 #             temp_file_path
 #         )
 
+#         # Step 5: Split text into chunks
+#         chunks = chunk_text(
+#             extracted_text,
+#             chunk_size=1000,
+#             chunk_overlap=200
+#         )
+
+#         # Step 6: Create embeddings
+#         embeddings = [
+#             create_embedding(chunk)
+#             for chunk in chunks
+#         ]
+
+#         # Step 7: Store chunks + embeddings in ChromaDB
+#         add_documents(
+#             chunks=chunks,
+#             embeddings=embeddings
+#         )
+
+#         # Step 8: Return response
 #         return {
-#             "message": "PDF uploaded successfully",
+#             "message": "PDF processed and stored successfully",
 #             "filename": file.filename,
-#             "text_preview": extracted_text[:2000]
+#             "total_characters": len(extracted_text),
+#             "total_chunks": len(chunks),
+#             "chunks": chunks[:5]
 #         }
 
 #     finally:
-#         # Delete temporary file
+#         # Step 9: Delete temporary PDF
 #         if os.path.exists(temp_file_path):
 #             os.remove(temp_file_path)
 
 
-
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from pydantic import BaseModel
 
 from app.auth import get_current_user
 from app.models.user import User
+
 from app.services.pdf_service import extract_text_from_pdf
 from app.services.chunk_service import chunk_text
+from app.services.embedding_service import create_embedding
+from app.services.rag_service import answer_from_pdf
+
+from app.services.chroma_service import (
+    add_documents,
+    search_documents
+)
 
 import tempfile
 import os
@@ -72,19 +109,34 @@ router = APIRouter(
 )
 
 
+# ==============================
+# PDF Search Request
+# ==============================
+
+class PDFSearchRequest(BaseModel):
+    query: str
+
+
+# ==============================
+# PDF Upload
+# ==============================
+
 @router.post("/upload")
 async def upload_pdf(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user)
 ):
+    # Step 1: Check file type
     if file.content_type != "application/pdf":
         raise HTTPException(
             status_code=400,
             detail="Only PDF files are allowed"
         )
 
+    # Step 2: Read uploaded PDF
     file_content = await file.read()
 
+    # Step 3: Create temporary PDF file
     with tempfile.NamedTemporaryFile(
         delete=False,
         suffix=".pdf"
@@ -95,20 +147,33 @@ async def upload_pdf(
         temp_file_path = temp_file.name
 
     try:
-        # Step 1: Extract text
+        # Step 4: Extract text
         extracted_text = extract_text_from_pdf(
             temp_file_path
         )
 
-        # Step 2: Create chunks
+        # Step 5: Create chunks
         chunks = chunk_text(
             extracted_text,
             chunk_size=1000,
             chunk_overlap=200
         )
 
+        # Step 6: Create embeddings
+        embeddings = [
+            create_embedding(chunk)
+            for chunk in chunks
+        ]
+
+        # Step 7: Store in ChromaDB
+        add_documents(
+            chunks=chunks,
+            embeddings=embeddings
+        )
+
+        # Step 8: Return result
         return {
-            "message": "PDF processed successfully",
+            "message": "PDF processed and stored successfully",
             "filename": file.filename,
             "total_characters": len(extracted_text),
             "total_chunks": len(chunks),
@@ -116,5 +181,51 @@ async def upload_pdf(
         }
 
     finally:
+        # Step 9: Delete temporary file
         if os.path.exists(temp_file_path):
             os.remove(temp_file_path)
+
+
+# ==============================
+# Semantic Search
+# ==============================
+
+@router.post("/search")
+def search_pdf(
+    request: PDFSearchRequest,
+    current_user: User = Depends(get_current_user)
+):
+    # Step 1: Convert user question into embedding
+    query_embedding = create_embedding(
+        request.query
+    )
+
+    # Step 2: Search similar chunks in ChromaDB
+    results = search_documents(
+        query_embedding=query_embedding,
+        top_k=3
+    )
+
+    # Step 3: Return relevant chunks
+    return {
+        "query": request.query,
+        "results": results["documents"][0]
+    }
+
+# ==============================
+# Ask Question From PDF
+# ==============================
+
+@router.post("/ask")
+def ask_pdf(
+    request: PDFSearchRequest,
+    current_user: User = Depends(get_current_user)
+):
+    answer = answer_from_pdf(
+        request.query
+    )
+
+    return {
+        "question": request.query,
+        "answer": answer
+    }
