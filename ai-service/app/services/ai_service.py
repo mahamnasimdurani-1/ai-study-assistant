@@ -1,33 +1,45 @@
 import os
-from openai import OpenAI
 
+from dotenv import load_dotenv
+from google import genai
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
+load_dotenv()
+
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
 )
 
 
 def get_ai_response(messages):
-    response = client.responses.create(
-        model="gpt-5.6-luna",
-        instructions="""
-        You are an AI Study Assistant.
+    """
+    Existing chat messages ko Gemini ke liye
+    simple text prompt mein convert karta hai.
+    """
 
-        Your job is to help students learn programming,
-        Python, JavaScript, MERN, Machine Learning,
-        Data Science, and AI.
+    try:
+        prompt_parts = []
 
-        Follow these rules:
-        1. Explain difficult concepts in simple language.
-        2. Give examples when useful.
-        3. Explain step by step.
-        4. If the student is confused, explain again simply.
-        5. Do not unnecessarily make answers complicated.
-        6. Encourage understanding instead of just giving
-           the final answer.
-        7. Use previous conversation context when answering.
-        """,
-        input=messages
-    )
+        for message in messages:
+            role = message.get("role", "")
+            content = message.get("content", "")
 
-    return response.output_text
+            prompt_parts.append(
+                f"{role.upper()}: {content}"
+            )
+
+        prompt = "\n\n".join(prompt_parts)
+
+        response = client.models.generate_content(
+            model="gemini-3.1-flash-lite",
+            contents=prompt
+        )
+
+        return response.text
+
+    except Exception as error:
+        print("Gemini API error:", error)
+
+        return (
+            "Sorry, I could not generate an AI "
+            "response right now."
+        )
